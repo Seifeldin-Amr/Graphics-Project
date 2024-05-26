@@ -1,0 +1,10 @@
+C:\Users\Asus\source\repos\Graphics Project\Graphics Project\bin\Debug\Graphics Project.exe.config
+C:\Users\Asus\source\repos\Graphics Project\Graphics Project\bin\Debug\Graphics Project.exe
+C:\Users\Asus\source\repos\Graphics Project\Graphics Project\bin\Debug\Graphics Project.pdb
+C:\Users\Asus\source\repos\Graphics Project\Graphics Project\obj\Debug\Graphics Project.csproj.AssemblyReference.cache
+C:\Users\Asus\source\repos\Graphics Project\Graphics Project\obj\Debug\Graphics_Project.Form1.resources
+C:\Users\Asus\source\repos\Graphics Project\Graphics Project\obj\Debug\Graphics_Project.Properties.Resources.resources
+C:\Users\Asus\source\repos\Graphics Project\Graphics Project\obj\Debug\Graphics Project.csproj.GenerateResource.cache
+C:\Users\Asus\source\repos\Graphics Project\Graphics Project\obj\Debug\Graphics Project.csproj.CoreCompileInputs.cache
+C:\Users\Asus\source\repos\Graphics Project\Graphics Project\obj\Debug\Graphics Project.exe
+C:\Users\Asus\source\repos\Graphics Project\Graphics Project\obj\Debug\Graphics Project.pdb
