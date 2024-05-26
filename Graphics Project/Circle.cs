@@ -16,7 +16,7 @@ namespace Graphics_Project
         public void Drawcircle(Graphics g)
         {
 
-            for (float th = stth; th < enth; th++)
+            for (float th = 0; th < 360; th++)
             {
 
 
@@ -25,13 +25,10 @@ namespace Graphics_Project
                 y = (float)(Rad * Math.Sin(thRadian) + YC);
 
 
-                if (th == stth)
-                {
-                    g.DrawLine(Pens.Black, XC, YC, x, y);
-                }
+               
                 g.FillEllipse(Brushes.Black, x, y, 5, 5);
             }
-            g.DrawLine(Pens.Black, XC, YC, x, y);
+            
 
         }
         public PointF Getnextpoint(int theta)
