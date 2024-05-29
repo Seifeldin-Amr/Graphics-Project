@@ -21,6 +21,9 @@ namespace Graphics_Project
         List<DDA> Lines = new List<DDA>();
         List<BezierCurve> Curves = new List<BezierCurve>();
         int currentMode = 1;
+        PointF currentStart;
+        int li=-1, ci=-1, bi=-1;
+        int lastEnter = -1;
         public Form1()
         {
             InitializeComponent();
@@ -64,15 +67,61 @@ namespace Graphics_Project
                     {
                         //DDA: Increase Length of Line
                         case 1:
-
+                            if (Lines.Count > 0)
+                            {
+                                if (lastEnter == 1)
+                                {
+                                    Lines[li].Xe += 5;
+                                    currentStart.X += 5;
+                                }
+                            }
                             break;
                         //Circle: Increase Radius of Circle
                         case 2:
+                            if (Circles.Count > 0)
+                            {
+                                if (lastEnter == 2)
+                                {
+                                   
+                                  
 
+                                    Circles[ci].YC -= 5;
+                                    Circles[ci].Rad += 5;
+                                  
+                                }
+                            }
                             break;
                         //Curve: Increase Curvature Height
                         case 3:
-                            //obj.SetControlPoint(new Point(100,100 ));
+                            if (Curves.Count > 0)
+                            {
+                                if (lastEnter == 3)
+                                {
+                                    Point p = new Point();
+                                    p.X = Curves[bi].ControlPoints[2].X ;
+                                    p.Y = Curves[bi].ControlPoints[2].Y - 5;
+                                    Curves[bi].ControlPoints[2] = p;
+                                    //Point p = new Point();
+                                    //p.X = Curves[bi].ControlPoints[2].X+2;
+                                    //p.Y = Curves[bi].ControlPoints[2].Y - 5;
+                                    //Curves[bi].ControlPoints[2] = p;
+
+                                    //p.X = Curves[bi].ControlPoints[1].X+1;
+                                    //p.Y = Curves[bi].ControlPoints[1].Y ;
+                                    //Curves[bi].ControlPoints[1] = p;
+
+                                    //p.X = Curves[bi].ControlPoints[3].X+3;
+                                    //p.Y = Curves[bi].ControlPoints[3].Y ;
+                                    //Curves[bi].ControlPoints[3] = p;
+
+                                    //p.X = Curves[bi].ControlPoints[4].X+4;
+                                    //p.Y = Curves[bi].ControlPoints[4].Y;
+                                    //Curves[bi].ControlPoints[4] = p;
+                                    //currentStart.X += 4;
+
+
+                                }
+                            }
                             break;
                     }
                     break;
@@ -81,15 +130,59 @@ namespace Graphics_Project
                     {
                         //DDA: Decrease Length of Line
                         case 1:
-
+                            if(Lines.Count>0)
+                            {
+                                if (lastEnter == 1)
+                                {
+                                    Lines[li].Xe -= 5;
+                                    currentStart.X -= 5;
+                                }
+                            }
                             break;
                         //Circle: Decrease Radius of Circle
                         case 2:
+                            if (Circles.Count > 0)
+                            {
+                                if (lastEnter == 2)
+                                {
+                                  
 
+                                    Circles[ci].YC += 5;
+                                    Circles[ci].Rad -= 5;
+                                   
+                                }
+                            }
                             break;
                         //Curve: Decrease Curvature Height
                         case 3:
+                            if (Curves.Count > 0)
+                            {
+                                if (lastEnter == 3)
+                                {
+                                    Point p = new Point();
+                                    p.X = Curves[bi].ControlPoints[2].X;
+                                    p.Y = Curves[bi].ControlPoints[2].Y+5;
+                                    Curves[bi].ControlPoints[2]=p ;
+                                    //Point p = new Point();
+                                    //p.X = Curves[bi].ControlPoints[2].X-2;
+                                    //p.Y = Curves[bi].ControlPoints[2].Y + 5;
+                                    //Curves[bi].ControlPoints[2] = p;
 
+                                    //p.X = Curves[bi].ControlPoints[1].X-1;
+                                    //p.Y = Curves[bi].ControlPoints[1].Y ;
+                                    //Curves[bi].ControlPoints[1] = p;
+
+                                    //p.X = Curves[bi].ControlPoints[3].X-3;
+                                    //p.Y = Curves[bi].ControlPoints[3].Y ;
+                                    //Curves[bi].ControlPoints[3] = p;
+
+                                    //p.X = Curves[bi].ControlPoints[4].X-4;
+                                    //p.Y = Curves[bi].ControlPoints[4].Y;
+                                    //Curves[bi].ControlPoints[4] = p;
+                                    //currentStart.X -= 4;
+
+                                }
+                            }
                             break;
                     }
                     break;
@@ -99,19 +192,61 @@ namespace Graphics_Project
                     {
                         //Create DDA Line
                         case 1:
-
+                            DDA l1 = new DDA();
+                            l1.X = currentStart.X;
+                            l1.Y = currentStart.Y;
+                            l1.Xe = currentStart.X + 100;
+                            l1.Ye = currentStart.Y;
+                            l1.calc();
+                            currentStart.X += 100;
+                            Lines.Add(l1);
+                            li++;
+                            lastEnter = 1;
                             break;
                         //Create Circle
                         case 2:
-
+                            l1 = new DDA();
+                            l1.X = currentStart.X;
+                            l1.Y = currentStart.Y;
+                            l1.Xe = currentStart.X + 100;
+                            l1.Ye = currentStart.Y;
+                            l1.calc();
+                            currentStart.X += 100;
+                            Lines.Add(l1);
+                            Circle c1 = new Circle();
+                            c1.Rad = 100;
+                            c1.XC= (int)currentStart.X;
+                            c1.YC = (int)currentStart.Y - c1.Rad-5; 
+                            Circles.Add(c1);
+                            l1 = new DDA();
+                            l1.X = currentStart.X;
+                            l1.Y = currentStart.Y;
+                            l1.Xe = currentStart.X + 150;
+                            l1.Ye = currentStart.Y;
+                            l1.calc();
+                            currentStart.X += 150;
+                            Lines.Add(l1);
+                            li += 2;
+                            ci++;
+                            lastEnter = 2;
                             break;
                         //Create Curve
                         case 3:
-
+                            BezierCurve b1 = new BezierCurve();
+                            b1.SetControlPoint(new Point((int)currentStart.X, (int)currentStart.Y));
+                            b1.SetControlPoint(new Point((int)currentStart.X+50, (int)currentStart.Y));
+                            b1.SetControlPoint(new Point((int)currentStart.X+100, (int)currentStart.Y-290));
+                            b1.SetControlPoint(new Point((int)currentStart.X+150,(int)currentStart.Y));
+                            b1.SetControlPoint(new Point((int)currentStart.X+200, (int)currentStart.Y ));
+                            currentStart.X += 200;
+                            Curves.Add(b1);
+                            bi++;
+                            lastEnter = 3;
                             break;
                     }
                     break;
             }
+            DrawDubb(this.CreateGraphics());
         }
 
         private void Form1_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
@@ -122,7 +257,8 @@ namespace Graphics_Project
         private void Form1_Load(object sender, EventArgs e)
         {
             off = new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
-            
+            currentStart.X = 100;
+            currentStart.Y = 700;
             
         }
 
@@ -136,7 +272,7 @@ namespace Graphics_Project
         }
         void DrawScene(Graphics g)
         {
-            g.Clear(Color.Green);
+            g.Clear(Color.White);
             carPoint = obj.CalcCurvePointAtTime(my_t_inForm);
             for (int i = 0; i < Curves.Count; i++)
             {

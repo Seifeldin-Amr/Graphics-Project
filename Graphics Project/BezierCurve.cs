@@ -123,7 +123,7 @@ namespace Graphics_Project
 				for (float t=0.0f; t<=1.0; t+=t_inc)
 				{
 					    curvePoint = CalcCurvePointAtTime(t);
-                        g.FillEllipse(  new SolidBrush(cl), 
+                        g.FillEllipse(  Brushes.Black, 
                                         curvePoint.X-4, curvePoint.Y-4, 
                                         8, 8); 
 				}
@@ -131,7 +131,7 @@ namespace Graphics_Project
 
 		public void DrawCurve(Graphics g)
 		{
-			DrawControlPoints(g);
+			//DrawControlPoints(g);
 			DrawCurvePoints(g);
 		}
 
