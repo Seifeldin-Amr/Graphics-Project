@@ -92,7 +92,7 @@ namespace Graphics_Project
 
                             break;
                     }
-                    break;
+                    break; 
                 //Create the selected object
                 case Keys.Enter:
                     switch (currentMode)
