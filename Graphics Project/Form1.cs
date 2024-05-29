@@ -20,10 +20,16 @@ namespace Graphics_Project
         List<Circle> Circles = new List<Circle>();
         List<DDA> Lines = new List<DDA>();
         List<BezierCurve> Curves = new List<BezierCurve>();
+        List<int> Shapes = new List<int>();
         int currentMode = 1;
         PointF currentStart;
         int li=-1, ci=-1, bi=-1;
+        int si = 0;
         int lastEnter = -1;
+        int simulation = 0;
+        int circleRotate = 90;
+        bool isMoving = true;
+        PointF currentMove;
         public Form1()
         {
             InitializeComponent();
@@ -34,10 +40,86 @@ namespace Graphics_Project
             tt.Start();
             tt.Tick += Tt_Tick;
         }
+        void Move()
+        {
+            if (Shapes.Count > si)
+            {
+                switch (Shapes[si])
+                {
+                    case 1:
+                        if (Lines.Count > 0 && li < Lines.Count)
+                        {
+                            isMoving = Lines[li].CalcNextPoint();
+                            if (isMoving)
+                            {
 
+                                currentMove.X = Lines[li].cx;
+                                currentMove.Y = Lines[li].cy;
+                            }
+                            else
+                            {
+                                
+                                si++;
+                                li++;
+                                Move();
+
+                            }
+
+                        }
+                        break;
+                    case 2:
+                        if (Circles.Count > 0 && ci < Circles.Count)
+                        {
+                            if (circleRotate != -280)
+                            {
+                                PointF p = Circles[ci].Getnextpoint(circleRotate);
+                                currentMove.X = p.X;
+                                currentMove.Y = p.Y;
+                                circleRotate -= 10;
+                            }
+                            else
+                            {
+                               
+                                circleRotate = 90;
+                                si++;
+                                ci++;
+                                Move();
+                            }
+                            
+                        }
+                        break;
+                    case 3:
+                        if (Curves.Count > 0 && bi < Curves.Count)
+                        {
+                            if (currentMove.X < Curves[bi].ControlPoints[4].X)
+                            {
+                                PointF p = Curves[bi].CalcCurvePointAtTime(my_t_inForm);
+                                currentMove.X = p.X;
+                                currentMove.Y = p.Y;
+                                my_t_inForm += 0.01f;
+                            }
+                            else
+                            {
+                               
+                                my_t_inForm = 0.01f;
+                                si++;
+                                bi++;
+                                Move();
+                            }
+                        }
+                        break;
+
+                }
+                
+            }
+        }
         private void Tt_Tick(object sender, EventArgs e)
         {
-            
+            if(simulation==1)
+            {
+                Move();
+                DrawDubb(this.CreateGraphics());
+            }
         }
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
@@ -202,6 +284,7 @@ namespace Graphics_Project
                             Lines.Add(l1);
                             li++;
                             lastEnter = 1;
+                            Shapes.Add(1);
                             break;
                         //Create Circle
                         case 2:
@@ -229,6 +312,9 @@ namespace Graphics_Project
                             li += 2;
                             ci++;
                             lastEnter = 2;
+                            Shapes.Add(1);
+                            Shapes.Add(2);
+                            Shapes.Add(1);
                             break;
                         //Create Curve
                         case 3:
@@ -242,8 +328,15 @@ namespace Graphics_Project
                             Curves.Add(b1);
                             bi++;
                             lastEnter = 3;
+                            Shapes.Add(3);
                             break;
                     }
+                    break;
+                case Keys.R:
+                    simulation = 1;
+                    bi = 0;
+                    li = 0;
+                    ci = 0;
                     break;
             }
             DrawDubb(this.CreateGraphics());
@@ -259,9 +352,10 @@ namespace Graphics_Project
             off = new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
             currentStart.X = 100;
             currentStart.Y = 700;
-            
+            currentMove.X = 100;
+            currentMove.Y = 700;
         }
-
+        
         void DrawDubb(Graphics g)
         {
             
@@ -273,7 +367,7 @@ namespace Graphics_Project
         void DrawScene(Graphics g)
         {
             g.Clear(Color.White);
-            carPoint = obj.CalcCurvePointAtTime(my_t_inForm);
+           
             for (int i = 0; i < Curves.Count; i++)
             {
                 Curves[i].DrawCurve(g);
@@ -285,6 +379,10 @@ namespace Graphics_Project
             for (int i = 0; i < Circles.Count; i++)
             {
                 Circles[i].Drawcircle(g);
+            }
+            if (simulation == 1)
+            {
+                g.FillEllipse(Brushes.Green, currentMove.X - 5, currentMove.Y - 5, 10, 10);
             }
         }
     }
