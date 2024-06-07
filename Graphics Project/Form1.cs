@@ -30,8 +30,11 @@ namespace Graphics_Project
         int circleRotate = 90;
         bool isMoving = true;
         PointF currentMove;
-        Bitmap background = new Bitmap("1497.jpg");
+        Bitmap background1 = new Bitmap("1497.jpg");
+        Bitmap background2 = new Bitmap("1496.jpg");
         Bitmap rc = new Bitmap("RC.png");
+        int bgx = 0;
+        int bgy = 0;
         public Form1()
         {
             InitializeComponent();
@@ -123,6 +126,7 @@ namespace Graphics_Project
                         break;
 
                 }
+                bgx -= 2;
                 
             }
         }
@@ -381,8 +385,11 @@ namespace Graphics_Project
         {
             g.Clear(Color.White);
 
-            g.DrawImage(background,0,0,ClientSize.Width,ClientSize.Height);
-           
+            g.DrawImage(background1, bgx, 0, ClientSize.Width, ClientSize.Height);
+            g.DrawImage(background2, bgx + ClientSize.Width, 0, ClientSize.Width, ClientSize.Height);
+            g.DrawImage(background1, bgx + ClientSize.Width * 2, 0, ClientSize.Width, ClientSize.Height);
+            g.DrawImage(background2, bgx + ClientSize.Width * 3, 0, ClientSize.Width, ClientSize.Height);
+        
             for (int i = 0; i < Curves.Count; i++)
             {
                 Curves[i].DrawCurve(g);
