@@ -7,7 +7,7 @@ namespace Graphics_Project
         public float X, Y, Xe, Ye;
         float dy, dx, m;
         public float cx, cy;
-        int speed = 10;
+        public int speed = 10;
         public void calc()
         {
             dy = Ye - Y;
@@ -30,38 +30,9 @@ namespace Graphics_Project
                     }
 
                 }
-                else
-                {
-                    cx -= speed;
-                    cy -= m * speed;
-                    if (cx <= Xe)
-                    {
-                        return false;
-                    }
-                }
+                
             }
-            else
-            {
-                if (Y < Ye)
-                {
-                    cy += speed;
-                    cx += 1 / m * speed;
-                    if (cy >= Ye)
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    cy -= speed;
-                    cx -= 1 / m * speed;
-                    if (cy <= Ye)
-                    {
-                        return false;
-                    }
-                }
-
-            }
+           
             return true;
         }
 

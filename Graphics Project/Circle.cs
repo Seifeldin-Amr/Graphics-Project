@@ -26,7 +26,7 @@ namespace Graphics_Project
 
 
                
-                g.FillEllipse(Brushes.Black, x, y, 5, 5);
+                g.FillEllipse(Brushes.Black, x, y, 7, 7);
             }
             
 

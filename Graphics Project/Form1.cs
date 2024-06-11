@@ -27,8 +27,13 @@ namespace Graphics_Project
         int si = 0;
         int lastEnter = -1;
         int simulation = 0;
+        int speed = 1;
+        int speedC = 10;
         int circleRotate = 90;
+        int r = 0;
+        int v = 10;
         bool isMoving = true;
+        int flag = 0;
         PointF currentMove;
         Bitmap background1 = new Bitmap("1497.jpg");
         Bitmap background2 = new Bitmap("1496.jpg");
@@ -44,50 +49,83 @@ namespace Graphics_Project
             this.MouseDown += Form1_MouseDown;
             tt.Start();
             tt.Tick += Tt_Tick;
+           
             
         }
         void Move()
         {
-            if (Shapes.Count > si)
+            if (Shapes.Count > 0)
             {
+                
                 switch (Shapes[si])
                 {
                     case 1:
                         if (Lines.Count > 0 && li < Lines.Count)
                         {
                             isMoving = Lines[li].CalcNextPoint();
-                            if (isMoving)
+                            if (isMoving||currentMove.X+Lines[li].speed<Lines[li].Xe)
                             {
-
-                                currentMove.X = Lines[li].cx;
-                                currentMove.Y = Lines[li].cy;
+                                float dif=Lines[li].cx - currentMove.X;
+                               
+                                if (currentMove.X <= 500)
+                                {
+                                    currentMove.X = Lines[li].cx*speed;
+                                    currentMove.Y = Lines[li].cy;
+                                }
+                                scrollMove(Lines[li].speed);
                             }
                             else
                             {
-                                
-                                si++;
+                                if (si < Shapes.Count-1)
+                                {
+                                    si++;
+                                   
+                                }
                                 li++;
+                                
                                 Move();
-
+                                
                             }
 
                         }
+                       
                         break;
                     case 2:
                         if (Circles.Count > 0 && ci < Circles.Count)
                         {
-                            if (circleRotate != -280)
+                            
+                            if (circleRotate >= -275)
                             {
                                 PointF p = Circles[ci].Getnextpoint(circleRotate);
+
+                               
                                 currentMove.X = p.X;
                                 currentMove.Y = p.Y;
-                                circleRotate -= 10;
+                                if (circleRotate <= -110 && flag==0)
+                                {
+                                    flag = 1;
+                                    speedC =+30;
+                                   
+                                }
+                               
+                                if(flag==1)
+                                {
+                                    circleRotate -= speedC;
+                                }
+                                else
+                                {
+                                    circleRotate -= speedC;
+                                }
                             }
                             else
                             {
-                               
+
+                                flag = 0;
                                 circleRotate = 90;
-                                si++;
+                                if (si < Shapes.Count - 1)
+                                {
+                                    si++;
+                                }
                                 ci++;
                                 Move();
                             }
@@ -97,28 +135,46 @@ namespace Graphics_Project
                     case 3:
                         if (Curves.Count > 0 && bi < Curves.Count)
                         {
+                            float dif;
                             if (currentMove.X < Curves[bi].ControlPoints[4].X)
                             { 
                                 if (currentMove.X < Curves[bi].ControlPoints[2].X)
                                 {
                                     PointF p = Curves[bi].CalcCurvePointAtTime(my_t_inForm);
-                                    currentMove.X = p.X;
+                                    dif= p.X - currentMove.X;
+                                    scrollMove((int)dif);
+                                    if (currentMove.X <= 500)
+                                    {
+                                        currentMove.X = p.X;
+                                       
+                                    }
                                     currentMove.Y = p.Y;
                                     my_t_inForm += 0.02f;
+                                   
                                 }
                                 else
                                 {
                                     PointF p = Curves[bi].CalcCurvePointAtTime(my_t_inForm);
-                                    currentMove.X = p.X;
+                                    dif = p.X - currentMove.X;
+                                    scrollMove((int)dif);
+                                    if (currentMove.X <= 500)
+                                    {
+                                        currentMove.X = p.X;
+                                        
+                                    }
                                     currentMove.Y = p.Y;
                                     my_t_inForm += 0.05f;
+                                 
                                 }
                             }
                             else
                             {
                                
                                 my_t_inForm = 0.01f;
-                                si++;
+                                if (si < Shapes.Count - 1)
+                                {
+                                    si++;
+                                }
                                 bi++;
                                 Move();
                             }
@@ -126,6 +182,7 @@ namespace Graphics_Project
                         break;
 
                 }
+
                 
             }
         }
@@ -134,8 +191,42 @@ namespace Graphics_Project
             if (simulation == 1)
             {
                 Move();
+               
             }
             DrawDubb(this.CreateGraphics());
+        }
+        void scrollMove(int move)
+        {
+
+            if (currentMove.X >= 500 && simulation == 1)
+            {
+
+                for (int i = 0; i < Lines.Count; i++)
+                {
+                    
+                    Lines[i].X -= move;
+                    Lines[i].Xe -= move;
+                   
+
+                }
+                for (int i = 0; i < Circles.Count; i++)
+                {
+                    Circles[i].XC -= move;
+                }
+                for (int i = 0; i < Curves.Count; i++)
+                {
+                    for (int j = 0; j < Curves[i].ControlPoints.Count; j++)
+                    {
+                        Point p = new Point();
+                        p = Curves[i].ControlPoints[j];
+                        p.X = Curves[i].ControlPoints[j].X - move;
+                        Curves[i].ControlPoints[j] = p;
+
+                    }
+                }
+              
+                bgx -= move;
+            }
         }
         void scrollDraw(int move)
         {
@@ -147,6 +238,7 @@ namespace Graphics_Project
                 {
                     Lines[i].X -= move;
                     Lines[i].Xe -= move;
+
 
                 }
                 for(int i = 0;i<Circles.Count;i++)
@@ -237,27 +329,28 @@ namespace Graphics_Project
                             {
                                 if (lastEnter == 3)
                                 {
-                                    Point p = new Point();
-                                    p.X = Curves[bi].ControlPoints[2].X;
-                                    p.Y = Curves[bi].ControlPoints[2].Y - 5;
-                                    Curves[bi].ControlPoints[2] = p;
                                     //Point p = new Point();
-                                    //p.X = Curves[bi].ControlPoints[2].X+2;
+                                    //p.X = Curves[bi].ControlPoints[2].X;
                                     //p.Y = Curves[bi].ControlPoints[2].Y - 5;
                                     //Curves[bi].ControlPoints[2] = p;
+                                    Point p = new Point();
+                                    p.X = Curves[bi].ControlPoints[2].X + 2;
+                                    p.Y = Curves[bi].ControlPoints[2].Y - 5;
+                                    Curves[bi].ControlPoints[2] = p;
 
-                                    //p.X = Curves[bi].ControlPoints[1].X+1;
-                                    //p.Y = Curves[bi].ControlPoints[1].Y ;
-                                    //Curves[bi].ControlPoints[1] = p;
+                                    p.X = Curves[bi].ControlPoints[1].X + 1;
+                                    p.Y = Curves[bi].ControlPoints[1].Y;
+                                    Curves[bi].ControlPoints[1] = p;
 
-                                    //p.X = Curves[bi].ControlPoints[3].X+3;
-                                    //p.Y = Curves[bi].ControlPoints[3].Y ;
-                                    //Curves[bi].ControlPoints[3] = p;
+                                    p.X = Curves[bi].ControlPoints[3].X + 3;
+                                    p.Y = Curves[bi].ControlPoints[3].Y;
+                                    Curves[bi].ControlPoints[3] = p;
 
-                                    //p.X = Curves[bi].ControlPoints[4].X+4;
-                                    //p.Y = Curves[bi].ControlPoints[4].Y;
-                                    //Curves[bi].ControlPoints[4] = p;
-                                    //currentStart.X += 4;
+                                    p.X = Curves[bi].ControlPoints[4].X + 4;
+                                    p.Y = Curves[bi].ControlPoints[4].Y;
+                                    Curves[bi].ControlPoints[4] = p;
+                                    currentStart.X += 4;
+                                    scrollDraw(4);
 
 
                                 }
@@ -303,27 +396,27 @@ namespace Graphics_Project
                             {
                                 if (lastEnter == 3)
                                 {
-                                    Point p = new Point();
-                                    p.X = Curves[bi].ControlPoints[2].X;
-                                    p.Y = Curves[bi].ControlPoints[2].Y + 5;
-                                    Curves[bi].ControlPoints[2] = p;
                                     //Point p = new Point();
-                                    //p.X = Curves[bi].ControlPoints[2].X-2;
+                                    //p.X = Curves[bi].ControlPoints[2].X;
                                     //p.Y = Curves[bi].ControlPoints[2].Y + 5;
                                     //Curves[bi].ControlPoints[2] = p;
+                                    Point p = new Point();
+                                    p.X = Curves[bi].ControlPoints[2].X - 2;
+                                    p.Y = Curves[bi].ControlPoints[2].Y + 5;
+                                    Curves[bi].ControlPoints[2] = p;
 
-                                    //p.X = Curves[bi].ControlPoints[1].X-1;
-                                    //p.Y = Curves[bi].ControlPoints[1].Y ;
-                                    //Curves[bi].ControlPoints[1] = p;
+                                    p.X = Curves[bi].ControlPoints[1].X - 1;
+                                    p.Y = Curves[bi].ControlPoints[1].Y;
+                                    Curves[bi].ControlPoints[1] = p;
 
-                                    //p.X = Curves[bi].ControlPoints[3].X-3;
-                                    //p.Y = Curves[bi].ControlPoints[3].Y ;
-                                    //Curves[bi].ControlPoints[3] = p;
+                                    p.X = Curves[bi].ControlPoints[3].X - 3;
+                                    p.Y = Curves[bi].ControlPoints[3].Y;
+                                    Curves[bi].ControlPoints[3] = p;
 
-                                    //p.X = Curves[bi].ControlPoints[4].X-4;
-                                    //p.Y = Curves[bi].ControlPoints[4].Y;
-                                    //Curves[bi].ControlPoints[4] = p;
-                                    //currentStart.X -= 4;
+                                    p.X = Curves[bi].ControlPoints[4].X - 4;
+                                    p.Y = Curves[bi].ControlPoints[4].Y;
+                                    Curves[bi].ControlPoints[4] = p;
+                                    currentStart.X -= 4;
 
                                 }
                             }
@@ -365,7 +458,7 @@ namespace Graphics_Project
                             Circle c1 = new Circle();
                             c1.Rad = 100;
                             c1.XC = (int)currentStart.X;
-                            c1.YC = (int)currentStart.Y - c1.Rad - 5;
+                            c1.YC = (int)currentStart.Y - c1.Rad;
                             Circles.Add(c1);
                             l1 = new DDA();
                             l1.X = currentStart.X;
@@ -407,6 +500,42 @@ namespace Graphics_Project
                     li = 0;
                     ci = 0;
                     break;
+                case Keys.T:
+                    my_t_inForm = 0.01f;
+                    Circles.Clear();
+                    Lines.Clear();
+                    Curves.Clear();
+                    Shapes.Clear();
+                    currentMode = 1;
+                    currentStart.X = 100;
+                    currentStart.Y = 910;
+                    currentMove.X = 50;
+                    currentMove.Y = 910;
+                    li = -1;
+                    ci = -1; 
+                    bi = -1;
+                    si = 0;
+                    lastEnter = -1;
+                    simulation = 0;
+                    circleRotate = 90;
+                    isMoving = true;
+                    bgx = 0;
+                    bgy = 0;
+                    r = 0;
+                    break;
+                case Keys.Right:
+                   for(int i=0;i<Lines.Count;i++)
+                    {
+                        Lines[i].speed += 5;
+                    }
+                    break;
+                case Keys.Left:
+                    for (int i = 0; i < Lines.Count; i++)
+                    {
+                        Lines[i].speed -= 5;
+                    }
+                    break;
+
             }
             DrawDubb(this.CreateGraphics());
         }
@@ -446,10 +575,18 @@ namespace Graphics_Project
             {
                 Curves[i].DrawCurve(g);
             }
-            for (int i = 0; i < Lines.Count; i++)
+            for (int i = Lines.Count-1; i >=0; i--)
             {
-                g.DrawRectangle(Pens.Black, Lines[i].X, Lines[i].Y, Lines[i].Xe-Lines[i].X, Lines[i].Ye-Lines[i].Y+1);
-                g.DrawRectangle(Pens.Black, Lines[i].X, Lines[i].Y+2, Lines[i].Xe - Lines[i].X, Lines[i].Ye+1 - Lines[i].Y);
+                if (i %2== 0)
+                {
+                    g.DrawRectangle(Pens.Black, Lines[i].X, Lines[i].Y, Lines[i].Xe - Lines[i].X, Lines[i].Ye - Lines[i].Y + 1);
+                    g.DrawRectangle(Pens.Black, Lines[i].X, Lines[i].Y + 2, Lines[i].Xe - Lines[i].X, Lines[i].Ye + 1 - Lines[i].Y);
+                }
+                else
+                {
+                    g.DrawRectangle(Pens.Red, Lines[i].X, Lines[i].Y, Lines[i].Xe - Lines[i].X, Lines[i].Ye - Lines[i].Y + 1);
+                    g.DrawRectangle(Pens.Red, Lines[i].X, Lines[i].Y + 2, Lines[i].Xe - Lines[i].X, Lines[i].Ye + 1 - Lines[i].Y);
+                }
             }
             for (int i = 0; i < Circles.Count; i++)
             {
@@ -457,6 +594,71 @@ namespace Graphics_Project
             }
             if (simulation == 1)
             {
+                if (Shapes.Count>0)
+                {
+                    if (Shapes[si] == 2)
+                    {
+                        g.TranslateTransform(currentMove.X, currentMove.Y);
+
+                        //now rotate the image
+                        g.RotateTransform(r);
+                        r -= speedC;
+                        if (r <= -360)
+                        {
+                            r = 0;
+                        }
+                        //now we return the transformation we applied
+                        g.TranslateTransform(-currentMove.X - 5, -currentMove.Y - 5);
+                    }
+                    if (Shapes[si] == 3)
+                    {
+                        g.TranslateTransform(currentMove.X, currentMove.Y);
+
+                        //now rotate the image
+                        g.RotateTransform(r);
+
+
+                        if (Curves.Count > 0 && bi < Curves.Count)
+                        {
+                            if (currentMove.X <= Curves[bi].ControlPoints[2].X - 30)
+                            {
+                                if (r > -50)
+                                {
+                                    r -= v;
+                                }
+
+                            }
+                            else
+                            {
+                                if (currentMove.X < Curves[bi].ControlPoints[4].X - 30)
+                                {
+                                    if (r < 40)
+                                    {
+                                        r += v;
+                                        
+                                    }
+                                }
+                                else
+                                {
+                                    if (r > 0)
+                                    {
+                                        r -= v;
+                                        
+                                        
+                                    }
+                                }
+                            }
+                            
+
+                        }
+
+
+
+
+                        //now we return the transformation we applied
+                        g.TranslateTransform(-currentMove.X, -currentMove.Y);
+                    }
+                }
                 g.DrawImage(rc, currentMove.X - 10, currentMove.Y - 10, 40, 20);
             }
         }
